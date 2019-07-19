@@ -15,7 +15,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    # Welcoms new members
+    # Welcomes new members
     await member.guild.default_channel.send(f"Hey {member.mention}, welcome to {member.guild.name}")
     utils.log(f"{member.display_name} just joined {member.guild.name}")
 
