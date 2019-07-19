@@ -10,6 +10,11 @@ def log(message: str):
     print(f"{datetime.today().strftime('%d-%m-%Y %H:%M:%S')}  {message}")
 
 
+def format_time(time):
+    """Format time to my preferred display format."""
+    return time.strftime("%a, %d %b %Y %I:%M:%S %p")
+
+
 def load_cogs(bot):
     log("Loading cogs...")
     imported_cogs = 0
