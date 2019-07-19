@@ -1,4 +1,5 @@
 import os
+import time
 
 from discord.ext import commands
 from utils import log
@@ -50,6 +51,25 @@ class Discord(Cog):
 
         utils.log(f"{ctx.message.author.display_name} requested {user.display_name}'s profile")
         await ctx.send(embed = em)
+
+    @commands.command(aliases = ["ms"])
+    async def ping(self, ctx):
+        t_1 = time.perf_counter()
+        await ctx.trigger_typing()
+        t_2 = time.perf_counter()
+        time_delta = round((t_2 - t_1) * 1000)
+        await ctx.send(embed = utils.embed(title = "Ping", description = f"Pong {time_delta}ms"))
+        utils.log(f"{ctx.message.author.display_name} pinged the server. Ping: {time_delta}ms")
+
+    @commands.command(aliases = ["say", "simonsays"])
+    async def echo(self, ctx, *message: str):
+        await ctx.send(embed = utils.embed(title = "Echo", description = ' '.join(message)))
+        utils.log(f"{ctx.message.author.display_name} echoed \"{' '.join(message)}\"")
+
+    @commands.command(aliases = ["calc"])
+    async def math(self, ctx, equation: str):
+        await ctx.send(embed = utils.embed(title = "Math", description = f"{equation.strip()} = {eval(equation)}"))
+        utils.log(f"{ctx.message.author.display_name} did math equation {equation.strip()} = {eval(equation)}")
 
     @commands.command(hidden = True)
     async def test(self, ctx, user_id: int):
