@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Containers>
+    <Date>2019-07-19</Date>
+    <Beta>False</Beta>
+    <Name>LoliPrincess</Name>
+    <Overview>
+        A custom Discord bot.
+    </Overview>
+    <Description>
+        A custom Discord bot.
+    </Description>
+    <Registry>https://registry.hub.docker.com/u/skippythesnake/loli-princess</Registry>
+    <GitHub>https://github.com/SkippyTheSnake/loli-princess</GitHub>
+    <Repository>skippythesnake/loli-princess</Repository>
+    <Support>https://github.com/SkippyTheSnake/LoliPrincess</Support>
+    <BindTime>true</BindTime>
+    <Privileged>false</Privileged>
+    <Networking>
+        <Mode>host</Mode>
+        <Publish/>
+    </Networking>
+    <Environment>
+        <Variable>
+            <Name>CMD_PREFIX</Name>
+            <Value>?</Value>
+        </Variable>
+        <Variable>
+            <Name>TOKEN</Name>
+        </Variable>
+    </Environment>
+    <Data>
+        <Volume>
+            <HostDir>/mnt/user/appdata/LoliPrincess/data</HostDir>
+            <ContainerDir>/app/data</ContainerDir>
+            <Mode>rw</Mode>
+        </Volume>
+    </Data>
+    <Icon>
+        https://pbs.twimg.com/profile_images/1148340875937718272/sBvqcUJl_400x400.jpg
+    </Icon>
+</Containers>
