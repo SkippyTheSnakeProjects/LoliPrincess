@@ -21,8 +21,7 @@ def load_cogs(bot):
     for path, subdirs, files in os.walk('cogs'):
         for name in [x for x in files if x.endswith('.py')]:
             try:
-                bot.load_extension(os.path.join(
-                    path, name).replace('\\', '.')[:-3])
+                bot.load_extension(os.path.join(path, name).replace('/', '.').replace('\\', '.')[:-3])
             except NoEntryPointError:
                 pass
 
