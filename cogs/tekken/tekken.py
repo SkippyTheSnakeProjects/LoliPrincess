@@ -2,6 +2,7 @@ import os
 from pprint import pprint
 
 from discord.ext import commands
+from utils import log
 from discord.ext.commands.cog import Cog
 import cogs.tekken.services as services
 from prettytable import PrettyTable
@@ -14,6 +15,7 @@ class Tekken(Cog):
 
     @commands.command(aliases = ['t7md'])
     async def tekkenmovedata(self, ctx, name: str, *move: str):
+        log(f"{ctx.message.author.display_name} requested tekken move data for {name} for the move {''.join(move)}")
         # Find matching name
         character_name = services.match_character_name(name)
         if character_name is None:
