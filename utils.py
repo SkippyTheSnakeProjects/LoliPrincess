@@ -59,3 +59,25 @@ def embed(**kwargs):
                   icon_url = kwargs.get('footer_icon', ''))
 
     return em
+
+
+async def send_large_table(channel, table, heading = ''):
+    # Split table into 2000 character segments so not to hit the message length limit
+    msg = [x + '\n' for x in str(table).split('\n')]
+    msg_batch = heading + '\n'
+    for i, line in enumerate(msg):
+        line = line.lstrip()
+        line_added = False
+
+        if len(msg_batch) + len(line) < 1998:
+            msg_batch += line
+            line_added = True
+
+        else:
+            await channel.send(f'`{msg_batch}`')
+            msg_batch = ''
+
+        if i == len(msg) - 1 and msg_batch != '':
+            await channel.send(f'`{msg_batch}`')
+            if not line_added:
+                await channel.send(f'`{line}`')
