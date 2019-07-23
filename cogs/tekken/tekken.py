@@ -33,10 +33,8 @@ class Tekken(Cog):
         # Create table to display information
         table = PrettyTable()
         table.field_names = move_data[0].keys()
-        pprint(move_data[0].keys())
 
         for move in move_data:
-            pprint(move.values())
             table.add_row(move.values())
 
         # This table may be large to use the large table method
