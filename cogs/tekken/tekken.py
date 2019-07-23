@@ -2,7 +2,6 @@ import os
 from pprint import pprint
 
 from discord.ext import commands
-from utils import log
 from discord.ext.commands.cog import Cog
 import cogs.tekken.services as services
 from prettytable import PrettyTable
