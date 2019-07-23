@@ -59,10 +59,10 @@ async def on_message_edit(before, after):
     await bot.on_message(after)
 
 
-# @bot.event
-# async def on_command_error(ctx, error):
-#     # Print the exception to the user
-#     await ctx.send(f"`{error}`", delete_after = ERROR_DISPLAY_TIME)
+@bot.event
+async def on_command_error(ctx, error):
+    # Print the exception to the user
+    await ctx.send(f"`{error}`", delete_after = ERROR_DISPLAY_TIME)
 
 
 log("----- Initializing -----")
