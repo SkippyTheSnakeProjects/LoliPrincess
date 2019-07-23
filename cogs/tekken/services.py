@@ -1,6 +1,5 @@
 import difflib
 import utils
-from pprint import pprint
 
 
 def get_move_info(name: str, moves: list):
