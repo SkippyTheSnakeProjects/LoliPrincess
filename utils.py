@@ -30,11 +30,10 @@ def load_cogs(bot):
         for name in [x for x in files if x.endswith('.py')]:
             try:
                 bot.load_extension(os.path.join(path, name).replace('/', '.').replace('\\', '.')[:-3])
+                imported_cogs += 1
+                log(f'Loaded {name}')
             except NoEntryPointError:
                 pass
-
-            imported_cogs += 1
-            log(f'Loaded {name}')
 
     return imported_cogs
 
