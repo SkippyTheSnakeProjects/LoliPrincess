@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-
+import json
 from discord.ext.commands.errors import NoEntryPointError
 import discord
 import os
@@ -8,6 +8,14 @@ import os
 
 def log(message: str):
     print(f"{datetime.today().strftime('%d-%m-%Y %H:%M:%S')}  {message}")
+
+
+def load_json(filepath: str):
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as f:
+            return json.load(f)
+
+    return None
 
 
 def format_time(time):
