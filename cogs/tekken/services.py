@@ -1,4 +1,5 @@
 import difflib
+
 import utils
 
 
@@ -26,9 +27,9 @@ def match_character_name(name: str) -> str:
 
 
 def match_move_command(name: str, move: str) -> list:
-    character_moves = get_characters_move_commands(name)
+    character_moves = [x for x in get_characters_move_commands(name) if x is not None]
     matches = difflib.get_close_matches(move, character_moves)
-
+    
     return matches
 
 
