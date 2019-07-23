@@ -67,9 +67,11 @@ class Discord(Cog):
         utils.log(f"{ctx.message.author.display_name} echoed \"{' '.join(message)}\"")
 
     @commands.command(aliases = ["calc"])
-    async def math(self, ctx, equation: str):
-        await ctx.send(embed = utils.embed(title = "Math", description = f"{equation.strip()} = {eval(equation)}"))
-        utils.log(f"{ctx.message.author.display_name} did math equation {equation.strip()} = {eval(equation)}")
+    async def math(self, ctx, *equation: str):
+        equation = ''.join(equation)
+        answer = eval(equation)
+        await ctx.send(embed = utils.embed(title = "Math", description = f"`{equation}` = \n{answer}"))
+        utils.log(f"{ctx.message.author.display_name} did math equation {equation} = {answer}")
 
     @commands.command(hidden = True)
     async def test(self, ctx, user_id: int):
