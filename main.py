@@ -31,9 +31,9 @@ async def on_member_remove(member):
 
     # Get the removers member object
     target_id = logs[0].user.id
-    for member in member.guild.members:
-        if member.id == target_id:
-            remover = member
+    for server_member in member.guild.members:
+        if server_member.id == target_id:
+            remover = server_member
 
     # Get the channel to send the messages to
     channel = member.guild.system_channel
