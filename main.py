@@ -74,5 +74,5 @@ log("----- Initializing -----")
 loaded = utils.load_cogs(bot)
 log(f"Loaded {loaded} cog{'s' if loaded > 1 else ''}")
 
-# Start bot
+# Start bot 
 bot.run(TOKEN)
