@@ -48,7 +48,7 @@ async def on_member_remove(member):
     # Triggers when user is banned
     elif logs[0].action == discord.AuditLogAction.ban:
         await channel.send(
-            content = f"Get MEGA fucked! {member.mention} has just been BANNED by {remover.display_name} :wave::skin-tone-3:")
+            content = f"Get MEGA fucked! {member.mention} has just been BANNED by {remover.mention} :wave::skin-tone-3:")
         utils.log(f"{member.display_name} was just banned from {member.guild.name} by {remover.display_name}")
     # Any other action is a server leave so send that flavour text
     else:
