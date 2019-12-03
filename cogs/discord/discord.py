@@ -104,7 +104,7 @@ class Discord(Cog):
                 return
 
         # Display the invite link
-        utils.log(f"{ctx.message.author.display_name} requested the invite linke for {ctx.guild.name}")
+        utils.log(f"{ctx.message.author.display_name} requested the invite link for {ctx.guild.name}")
         await ctx.send(perma_invite.url)
 
     @commands.command(hidden = True)
