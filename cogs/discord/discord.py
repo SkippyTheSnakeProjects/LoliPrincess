@@ -1,6 +1,7 @@
 import os
 import time
 
+import discord
 from discord.ext import commands
 from utils import log
 from discord.ext.commands.cog import Cog
@@ -72,6 +73,40 @@ class Discord(Cog):
         answer = eval(equation)
         await ctx.send(embed = utils.embed(title = "Math", description = f"`{equation}` = \n{answer}"))
         utils.log(f"{ctx.message.author.display_name} did math equation {equation} = {answer}")
+
+    @commands.command(aliases = ["inv"])
+    async def invite(self, ctx):
+        try:
+            invites = await ctx.guild.invites()
+        except discord.Forbidden:
+            # The bot needs to have permissions to read invites for this to work
+            await ctx.send("I don't have permission to view invites.")
+            utils.log(f"{ctx.message.author.display_name} tried to get an invite link for {ctx.guild.name}")
+            return
+
+        # Check if a permanent invite is already in place
+        perma_invite = None
+        for invite in invites:
+            if invite.max_uses == invite.max_age == 0:
+                perma_invite = invite
+                break
+
+        # Create permanent invite if one wasn't found
+        if perma_invite is None:
+            try:
+                perma_invite = await ctx.guild.text_channels[0].create_invite(
+                    reason = "Permanent invite for the server")
+                utils.log(
+                    f"Created a permanent invite for {ctx.guild.name} by request of {ctx.message.author.display_name}")
+            except discord.Forbidden:
+                # Permission is needed to create invites as well
+                await ctx.send("I don't have permission to create invites.")
+                utils.log(f"{ctx.message.author.display_name} tried to create an invite link for {ctx.guild.name}")
+                return
+
+        # Display the invite link
+        utils.log(f"{ctx.message.author.display_name} requested the invite linke for {ctx.guild.name}")
+        await ctx.send(perma_invite.url)
 
     @commands.command(hidden = True)
     async def test(self, ctx, user_id: int):
