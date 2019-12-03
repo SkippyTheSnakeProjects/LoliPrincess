@@ -3,7 +3,6 @@ import time
 
 import discord
 from discord.ext import commands
-from utils import log
 from discord.ext.commands.cog import Cog
 from discord import Member
 import utils
