@@ -19,7 +19,7 @@ class Discord(Cog):
         if author.voice is None:
             await ctx.send('You need to be connected to a voice channel to start screen sharing.')
             utils.log(
-                f"{ctx.message.author.display_name} requested the screen share link")
+                f"{ctx.message.author.display_name} requested the screen share link in {ctx.guild.name}")
         else:
             await ctx.send(f'https://www.discordapp.com/channels/{ctx.guild.id}/{author.voice.channel.id}')
             utils.log(
