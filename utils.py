@@ -10,18 +10,31 @@ def log(message: str):
     print(f"{datetime.today().strftime('%d-%m-%Y %H:%M:%S')}  {message}")
 
 
+def create_filepath(filepath: str):
+    if not os.path.exists(filepath):
+        os.makedirs(filepath)
+
+
 def load_json(filepath: str, default_value):
     log(f"Reading file {filepath}")
+    # Create the folder for the file to be contained in
+    create_filepath(filepath.rsplit('/', 1)[0])
+
+    # Create the file
     if not os.path.exists(filepath):
         with open(filepath, 'w') as f:
             json.dump(default_value, f)
 
+    # Read the file
     with open(filepath, 'r') as f:
         return json.load(f)
 
 
 def save_json(data: dict, filepath: str):
     log(f"Saving file {filepath}")
+    # Create the folder for the file to be contained in
+    create_filepath(filepath.rsplit('/', 1)[0])
+
     with open(filepath, 'w') as f:
         json.dump(data, f)
 
