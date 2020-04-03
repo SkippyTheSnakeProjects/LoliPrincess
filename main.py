@@ -1,10 +1,10 @@
 import discord
-from discord.ext import commands
-from config import CMD_PREFIX, TOKEN
+from config import TOKEN
+from bot import Bot
 import utils
 from config import ERROR_DISPLAY_TIME
 
-bot = commands.AutoShardedBot(commands.when_mentioned_or(CMD_PREFIX))
+bot = Bot()
 
 
 @bot.event
@@ -15,44 +15,49 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     # Welcomes new members
-    channel = member.guild.system_channel
-    channel = member.guild.channels[0] if channel is None else channel
-    await channel.send(f"Hey {member.mention}, welcome to {member.guild.name}")
+    channel = member.guild.system_channel or member.guild.channels[0]
+    await channel.send(utils.embed(
+        title = "User joined!",
+        description = f"Hey {member.mention}, welcome to {member.guild.name}!"
+    ))
     utils.log(f"{member.display_name} just joined {member.guild.name}")
 
 
 @bot.event
-async def on_member_remove(member):
-    # Load audit log
-    log = await member.guild.audit_logs(limit = 1).flatten()
-    log = log[0]
-
-    # Get the removers member object
-    target_id = log.user.id
-    for server_member in member.guild.members:
-        if server_member.id == target_id:
-            remover = server_member
-
+async def on_guild_remove(member):
     # Get the channel to send the messages to
-    channel = member.guild.system_channel
-    channel = member.guild.channels[0] if channel is None else channel
+    default_channel = member.guild.system_channel or member.guild.channels[0]
 
-    # Triggers when user is kicked
-    if log.action == discord.AuditLogAction.kick:
-        await channel.send(
-            content = f"Get fucked! {member.mention} has just been KICKED by {remover.mention}:wave::skin-tone-3:")
-        utils.log(f"{member.display_name} was just kicked from {member.guild.name} by {remover.display_name}")
+    # Load audit log
+    async for entry in member.guild.audit_logs(limit = 1):
+        if entry.target.id == member.id:
+            # Triggers when user is kicked
+            if entry.action == discord.AuditLogAction.kick:
+                await default_channel.send(embed = utils.embed(
+                    title = "Kicked!",
+                    description = f"Get fucked! {member.mention} has just been KICKED by {entry.user.mention}:wave::skin-tone-3:"
+                ))
+                utils.log(
+                    f"{member.display_name} was just kicked from {member.guild.name} by {entry.user.display_name}")
+                return
 
-    # Triggers when user is banned
-    elif log.action == discord.AuditLogAction.ban:
-        await channel.send(
-            content = f"Get MEGA fucked! {member.mention} has just been BANNED by {remover.mention} :wave::skin-tone-3:")
-        utils.log(f"{member.display_name} was just banned from {member.guild.name} by {remover.display_name}")
+            # Triggers when user is banned
+            elif entry.action == discord.AuditLogAction.ban:
+                await default_channel.send(embed = utils.embed(
+                    title = "Banned!",
+                    description = f"Get MEGA fucked! {member.mention} has just been BANNED by {entry.user.mention} :wave::skin-tone-3:"
+                ))
+
+                utils.log(
+                    f"{member.display_name} was just banned from {member.guild.name} by {entry.user.display_name}")
+                return
+
     # Any other action is a server leave so send that flavour text
-    else:
-        await channel.send(
-            content = f"{member.mention} has left the server:wave::skin-tone-3:")
-        utils.log(f"{member.display_name} has left the server")
+    await default_channel.send(embed = utils.embed(
+        title = "Left the server",
+        description = f"{member.mention} has left the server:wave::skin-tone-3:"
+    ))
+    utils.log(f"{member.display_name} has left the server")
 
 
 @bot.event
@@ -64,7 +69,8 @@ async def on_message_edit(before, after):
 @bot.event
 async def on_command_error(ctx, error):
     # Print the exception to the user
-    await ctx.send(f"`{error}`", delete_after = ERROR_DISPLAY_TIME)
+    await ctx.send(embed = utils.embed(title = "Command error", description = f"{error}"),
+                   delete_after = ERROR_DISPLAY_TIME)
 
 
 utils.log("----- Initializing -----")
@@ -72,5 +78,8 @@ utils.log("----- Initializing -----")
 loaded = utils.load_cogs(bot)
 utils.log(f"Loaded {loaded} cog{'s' if loaded > 1 else ''}")
 
-# Start bot 
+# ----- Add blacklist check
+bot.add_check(bot.blacklist.is_blacklisted)
+
+# Start bot
 bot.run(TOKEN)

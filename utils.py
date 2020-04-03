@@ -10,12 +10,20 @@ def log(message: str):
     print(f"{datetime.today().strftime('%d-%m-%Y %H:%M:%S')}  {message}")
 
 
-def load_json(filepath: str):
-    if os.path.exists(filepath):
-        with open(filepath, 'r') as f:
-            return json.load(f)
+def load_json(filepath: str, default_value):
+    log(f"Reading file {filepath}")
+    if not os.path.exists(filepath):
+        with open(filepath, 'w') as f:
+            json.dump(default_value, f)
 
-    return None
+    with open(filepath, 'r') as f:
+        return json.load(f)
+
+
+def save_json(data: dict, filepath: str):
+    log(f"Saving file {filepath}")
+    with open(filepath, 'w') as f:
+        json.dump(data, f)
 
 
 def format_time(time):
@@ -81,3 +89,10 @@ async def send_large_table(channel, table, heading = ''):
             await channel.send(f'`{msg_batch}`')
             if not line_added:
                 await channel.send(f'`{line}`')
+
+
+def get_user_from_id(user_id: str, guild: discord.Guild) -> discord.Member:
+    if guild is not None:
+        for member in guild.members:
+            if str(member.id) == str(user_id):
+                return member

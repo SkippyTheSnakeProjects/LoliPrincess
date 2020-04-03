@@ -107,10 +107,13 @@ class Discord(Cog):
         utils.log(f"{ctx.message.author.display_name} requested the invite link for {ctx.guild.name}")
         await ctx.send(perma_invite.url)
 
-    @commands.command(hidden = True)
-    async def test(self, ctx, user_id: int):
-        user = self.bot.get_user(user_id)
-        await ctx.send(user.name)
+    @commands.command(aliases = ["t"], hidden = True)
+    async def test(self, ctx):
+        print("Running test")
+        # Load audit log
+        async for entry in ctx.author.guild.audit_logs(limit = 100):
+            print('{0.user} did {0.action} to {0.target}'.format(entry))
+        print("Done")
 
 
 def setup(bot):
