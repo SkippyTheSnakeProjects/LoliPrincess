@@ -1,11 +1,15 @@
 import os
 import time
+import pytz
 
 import discord
 from discord.ext import commands
 from discord.ext.commands.cog import Cog
 from discord import Member
 import utils
+from datetime import datetime
+
+from config import TIMEZONE
 
 
 class Discord(Cog):
@@ -109,11 +113,7 @@ class Discord(Cog):
 
     @commands.command(aliases = ["t"], hidden = True)
     async def test(self, ctx):
-        print("Running test")
-        # Load audit log
-        async for entry in ctx.author.guild.audit_logs(limit = 100):
-            print('{0.user} did {0.action} to {0.target}'.format(entry))
-        print("Done")
+        print(utils.format_time(ctx.message.created_at))
 
 
 def setup(bot):

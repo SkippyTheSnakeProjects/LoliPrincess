@@ -1,5 +1,6 @@
 import os
 
+import discord
 from discord.ext import commands
 from discord.ext.commands.cog import Cog
 from discord import Member
@@ -9,6 +10,14 @@ import utils
 class Admins(Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.deleted_message_count = 0
+
+    def sent_by_user(self, message_author: discord.Member, from_user: discord.Member):
+        is_sent_by_user = from_user is None or str(message_author.id) == str(from_user.id)
+        if is_sent_by_user:
+            self.deleted_message_count += 1
+
+        return is_sent_by_user
 
     @commands.command()
     async def admins(self, ctx):
@@ -49,6 +58,38 @@ class Admins(Cog):
         await ctx.send(embed = utils.embed(
             title = "Reload admins",
             description = "The admins list has been reloaded."
+        ))
+
+    @commands.command()
+    async def purge(self, ctx, limit: int, from_user: Member = None):
+        await self.bot.admins.verify_admin(ctx)
+        self.deleted_message_count = 0
+
+        await ctx.message.channel.purge(limit = min(limit, 100),
+                                        check = lambda m: self.sent_by_user(m.author, from_user))
+
+        sent_by_message = f" sent by {from_user.mention}" if from_user is not None else ""
+        await ctx.send(embed = utils.embed(
+            title = "Purge since",
+            description = f"{ctx.message.author.mention} purged {limit} message history"
+                          f"{sent_by_message} from {ctx.message.channel.mention}.",
+            footer_text = f"Total messages removed: {self.deleted_message_count}"
+        ))
+
+    @commands.command()
+    async def purgesince(self, ctx, msg: discord.Message, from_user: Member = None):
+        await self.bot.admins.verify_admin(ctx)
+        self.deleted_message_count = 0
+        await ctx.message.channel.purge(limit = 100,
+                                        after = msg.created_at,
+                                        check = lambda m: self.sent_by_user(m.author, from_user))
+
+        sent_by_message = f" sent by {from_user.mention}" if from_user is not None else ""
+        await ctx.send(embed = utils.embed(
+            title = "Purge since",
+            description = f"{ctx.message.author.mention} purged messages sent since {utils.format_time(msg.created_at)}"
+                          f"{sent_by_message} from {ctx.message.channel.mention}.",
+            footer_text = f"Total messages removed: {self.deleted_message_count}"
         ))
 
 

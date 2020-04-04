@@ -1,9 +1,14 @@
 import re
 from datetime import datetime
 import json
+
+import pytz
 from discord.ext.commands.errors import NoEntryPointError
 import discord
+from discord.ext import commands
 import os
+
+from config import TIMEZONE
 
 
 def log(message: str):
@@ -37,11 +42,6 @@ def save_json(data: dict, filepath: str):
 
     with open(filepath, 'w') as f:
         json.dump(data, f)
-
-
-def format_time(time):
-    """Format time to my preferred display format."""
-    return time.strftime("%a, %d %b %Y %I:%M:%S %p")
 
 
 def load_cogs(bot):
@@ -109,3 +109,10 @@ def get_user_from_id(user_id: str, guild: discord.Guild) -> discord.Member:
         for member in guild.members:
             if str(member.id) == str(user_id):
                 return member
+
+
+def format_time(time: datetime):
+    """Format time to my preferred display format."""
+    tz_time = pytz.timezone('UTC').localize(time)
+    sent_time = tz_time.astimezone(pytz.timezone(TIMEZONE))
+    return sent_time.strftime("%m %b %Y %I:%M%p")

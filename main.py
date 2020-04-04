@@ -16,7 +16,7 @@ async def on_ready():
 async def on_member_join(member):
     # Welcomes new members
     channel = member.guild.system_channel or member.guild.channels[0]
-    await channel.send(utils.embed(
+    await channel.send(embed = utils.embed(
         title = "User joined!",
         description = f"Hey {member.mention}, welcome to {member.guild.name}!"
     ))

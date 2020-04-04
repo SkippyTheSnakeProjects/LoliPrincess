@@ -1,11 +1,11 @@
 from discord.ext import commands
-from config import CMD_PREFIX, BLACKLISTPATH, ADMINSPATH
+from config import CMD_PREFIX, BLACKLIST_PATH, ADMINS_PATH
 import utils
 from discord.ext.commands import CommandError
 
 
 def load_blacklist() -> dict:
-    return utils.load_json(BLACKLISTPATH, {})
+    return utils.load_json(BLACKLIST_PATH, {})
 
 
 class Blacklist:
@@ -15,7 +15,7 @@ class Blacklist:
         self.bot = bot
 
     def save_blacklist(self):
-        utils.save_json(self.blacklist, BLACKLISTPATH)
+        utils.save_json(self.blacklist, BLACKLIST_PATH)
 
     def reload(self):
         self.blacklist = load_blacklist()
@@ -40,7 +40,7 @@ class Blacklist:
 
 
 def load_admins() -> dict:
-    return utils.load_json(ADMINSPATH, {})
+    return utils.load_json(ADMINS_PATH, {})
 
 
 class Admins:
@@ -50,7 +50,7 @@ class Admins:
         self.bot = bot
 
     def save_admins(self):
-        utils.save_json(self.admins, ADMINSPATH)
+        utils.save_json(self.admins, ADMINS_PATH)
 
     def reload(self):
         self.admins = load_admins()
