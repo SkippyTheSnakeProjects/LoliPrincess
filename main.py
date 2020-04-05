@@ -1,8 +1,11 @@
+import random
+
 import discord
-from config import TOKEN
-from bot import Bot
+
 import utils
+from bot import Bot
 from config import ERROR_DISPLAY_TIME
+from config import TOKEN
 
 bot = Bot()
 
@@ -10,6 +13,31 @@ bot = Bot()
 @bot.event
 async def on_ready():
     utils.log(f"----- {bot.user.name} online -----")
+
+
+@bot.event
+async def on_message(message):
+    if message.author.id == 140491748148248576 and random.randrange(1, 21) == 20:
+        await message.channel.send(r'''
+        ▬▬▬.◙.▬▬▬
+        ═▂▄▄▓▄▄▂ 
+        ◢◤ █▀▀████▄▄▄▄◢◤ 
+        █▄ █ █▄ ███▀▀▀▀▀▀▀╬ 
+        ◥█████◤
+        ══╩══╩═
+        ╬═╬
+        ╬═╬
+        ╬═╬
+        ╬═╬ 
+        ╬═╬  Just dropped down to say
+        ╬═╬
+        ╬═╬   Callum said the N word
+        ╬═╬☻/ 
+        ╬═╬/▌ 
+        ╬═╬/  \
+        ''')
+
+    await bot.process_commands(message)
 
 
 @bot.event

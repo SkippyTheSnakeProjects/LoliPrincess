@@ -1,15 +1,12 @@
 import os
 import time
-import pytz
 
 import discord
+from discord import Member
 from discord.ext import commands
 from discord.ext.commands.cog import Cog
-from discord import Member
-import utils
-from datetime import datetime
 
-from config import TIMEZONE
+import utils
 
 
 class Discord(Cog):
@@ -20,9 +17,10 @@ class Discord(Cog):
     async def screenshare(self, ctx):
         author = ctx.message.author
         if author.voice is None:
-            await ctx.send('You need to be connected to a voice channel to start screen sharing.')
             utils.log(
                 f"{ctx.message.author.display_name} requested the screen share link in {ctx.guild.name}")
+            raise commands.CommandError('You need to be connected to a voice channel to start screen sharing.')
+
         else:
             await ctx.send(f'https://www.discordapp.com/channels/{ctx.guild.id}/{author.voice.channel.id}')
             utils.log(
@@ -113,7 +111,7 @@ class Discord(Cog):
 
     @commands.command(aliases = ["t"], hidden = True)
     async def test(self, ctx):
-        print(utils.format_time(ctx.message.created_at))
+        print("TEST")
 
 
 def setup(bot):
