@@ -12,6 +12,14 @@ class Configuration(Cog):
         self.logger = create_logger(self)
 
     @commands.command()
+    async def reloadConfig(self, ctx):
+        await self.bot.admins.verify_admin(ctx)
+        changes = self.bot.config.reload_config()
+        changes = f"\n {len(changes)} Change{'s' if len(changes) > 1 else ''}" if len(changes) > 0 else ''
+        await ctx.send(embed = utils.embed(title = "Reload config",
+                                           description = f"Config file reloaded. {changes}"))
+
+    @commands.command()
     async def setCommandPrefix(self, ctx, new_command_prefix: str):
         await self.bot.admins.verify_admin(ctx)
         self.bot.config.CMD_PREFIX = new_command_prefix
@@ -22,12 +30,27 @@ class Configuration(Cog):
                                            description = f"Set the command prefix to \"{new_command_prefix}\""))
 
     @commands.command()
-    async def reloadConfig(self, ctx):
+    async def setErrorDisplayTime(self, ctx, error_display_time: int):
         await self.bot.admins.verify_admin(ctx)
-        changes = self.bot.config.reload_config()
-        changes = f"\n {len(changes)} Change{'s' if len(changes) > 1 else ''}" if len(changes) > 0 else ''
-        await ctx.send(embed = utils.embed(title = "Reload config",
-                                           description = f"Config file reloaded. {changes}"))
+        try:
+            self.bot.config.ERROR_DISPLAY_TIME = int(error_display_time)
+            self.bot.config.save_config()
+        except ValueError:
+            raise commands.CommandError("Please enter a valid number.")
+        await ctx.send(embed = utils.embed(title = "Set error display time",
+                                           description = f"Set the error display time to \"{error_display_time}\""))
+
+    @commands.command()
+    async def setTimezone(self, ctx, timezone: str):
+        await self.bot.admins.verify_admin(ctx)
+        self.bot.config.TIMEZONE = timezone
+        self.bot.config.save_config()
+        await ctx.send(embed = utils.embed(title = "Set timezone",
+                                           description = f"Set the timezone to \"{timezone}\""))
+
+    @commands.command()
+    async def set(self, ctx):
+        await self.bot.admins.verify_admin(ctx)
 
 
 def setup(bot):
