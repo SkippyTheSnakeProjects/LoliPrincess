@@ -99,6 +99,7 @@ class Driver:
         # chrome_options.add_argument("--log-level=3")
         logger.info("Creating Chrome instance.")
         self.driver = webdriver.Chrome(options = chrome_options)
+        logger.info("Chrome instance started.")
 
     def get(self, url: str) -> None:
         """ Loads a given url with the chromedriver. """
