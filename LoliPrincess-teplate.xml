@@ -21,10 +21,6 @@
     </Networking>
     <Environment>
         <Variable>
-            <Name>CMD_PREFIX</Name>
-            <Value>?</Value>
-        </Variable>
-        <Variable>
             <Name>TOKEN</Name>
         </Variable>
     </Environment>

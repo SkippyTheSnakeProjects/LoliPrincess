@@ -1,13 +1,17 @@
 import os
+
+from discord import Member
 from discord.ext import commands
 from discord.ext.commands.cog import Cog
-from discord import Member
+
 import utils
+from utils import create_logger
 
 
 class Blacklist(Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.logger = create_logger(self)
 
     @commands.command()
     async def blacklist(self, ctx):

@@ -1,10 +1,66 @@
+import json
 import os
+from typing import List
 
-CMD_PREFIX = os.environ['CMD_PREFIX']
-TOKEN = os.environ['TOKEN']
-ERROR_DISPLAY_TIME = 7
-TIMEZONE = 'Europe/London'
+CONFIG_PATH = 'data/config.json'
 
-OWNER_ID = 140264216761204737
-BLACKLIST_PATH = 'data/admin/blacklist.json'
-ADMINS_PATH = 'data/admin/admins.json'
+
+class Config:
+    TOKEN = os.environ['TOKEN']
+
+    def __init__(self):
+        self._bot = None
+        # Define configurable variables
+        self.CMD_PREFIX = '?'
+        self.ERROR_DISPLAY_TIME = 7
+        self.TIMEZONE = 'Europe/London'
+        self.LOG_FORMAT = '%(asctime)s [%(name)s] %(message)s'
+        self.LOG_LEVEL = 'INFO'
+
+        self.OWNER_ID = 0
+        self.BLACKLIST_PATH = 'data/admin/blacklist.json'
+        self.ADMINS_PATH = 'data/admin/admins.json'
+
+        self.LOL_API_KEY = ''
+
+        # If config path doesn't exist create it
+        if not os.path.exists(CONFIG_PATH):
+            self.save_config()
+
+        # Override default values with values from config
+        self.reload_config()
+
+    def save_config(self):
+        with open(CONFIG_PATH, 'w') as f:
+            # Exclude properties that start with and underscore
+            json.dump({k: v for k, v in self.__dict__.items() if not k.startswith('_')}, f)
+
+    def reload_config(self) -> List[str]:
+        with open(CONFIG_PATH, 'r') as f:
+            config = json.load(f)
+
+        changed_properties = self.update_from_config_file(config)
+        # Update config file to add any missing keys
+        self.save_config()
+
+        # Custom actions that need to be performed when loading config
+        if self._bot is not None:
+            self._bot.command_prefix = self.CMD_PREFIX
+            self._bot.blacklist.reload()
+            self._bot.admins.reload()
+
+        return changed_properties
+
+    def update_from_config_file(self, config: dict) -> List[str]:
+        changed_properties = []
+        # Exclude properties that start with and underscore
+        for config_property in [x for x in vars(self) if not x.startswith('_')]:
+            # Track changed properties
+            if config.get(config_property) != getattr(self, config_property):
+                changed_properties.append(config_property)
+
+            # Update properties if the key exists in config.json
+            if config_property in config.keys():
+                setattr(self, config_property, config.get(config_property))
+
+        return changed_properties

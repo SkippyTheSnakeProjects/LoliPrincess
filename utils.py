@@ -1,18 +1,29 @@
+import json
+import logging
+import os
 import re
 from datetime import datetime
-import json
 
+import coloredlogs
+import discord
 import pytz
 from discord.ext.commands.errors import NoEntryPointError
-import discord
-from discord.ext import commands
-import os
-
-from config import TIMEZONE
 
 
-def log(message: str):
-    print(f"{datetime.today().strftime('%d-%m-%Y %H:%M:%S')}  {message}")
+def log(message: str, level: str = 'info'):
+    logger = logging.getLogger(__name__)
+    mapping = {'info'    : logger.info,
+               'warning' : logger.warning,
+               'error'   : logger.error,
+               'critical': logger.critical}
+
+    mapping.get(level)(message)
+
+
+def create_logger(self):
+    logger = logging.getLogger(self.__class__.__name__)
+    coloredlogs.install(level = self.bot.config.LOG_LEVEL, fmt = self.bot.config.LOG_FORMAT, logger = logger)
+    return logger
 
 
 def create_filepath(filepath: str):
@@ -21,7 +32,7 @@ def create_filepath(filepath: str):
 
 
 def load_json(filepath: str, default_value):
-    log(f"Reading file {filepath}")
+    log("Loading file: " + filepath)
     # Create the folder for the file to be contained in
     create_filepath(filepath.rsplit('/', 1)[0])
 
@@ -36,7 +47,6 @@ def load_json(filepath: str, default_value):
 
 
 def save_json(data: dict, filepath: str):
-    log(f"Saving file {filepath}")
     # Create the folder for the file to be contained in
     create_filepath(filepath.rsplit('/', 1)[0])
 
@@ -111,8 +121,8 @@ def get_user_from_id(user_id: str, guild: discord.Guild) -> discord.Member:
                 return member
 
 
-def format_time(time: datetime):
+def format_time(time: datetime, timezone: str):
     """Format time to my preferred display format."""
     tz_time = pytz.timezone('UTC').localize(time)
-    sent_time = tz_time.astimezone(pytz.timezone(TIMEZONE))
+    sent_time = tz_time.astimezone(pytz.timezone(timezone))
     return sent_time.strftime("%m %b %Y %I:%M%p")

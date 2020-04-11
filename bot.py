@@ -1,5 +1,7 @@
+import logging
 from io import BytesIO
 
+import coloredlogs
 from PIL import Image
 from discord.ext import commands
 from discord.ext.commands import CommandError
@@ -10,24 +12,22 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 import utils
-from config import ADMINS_PATH, BLACKLIST_PATH, CMD_PREFIX
-
-
-def load_blacklist() -> dict:
-    return utils.load_json(BLACKLIST_PATH, {})
+from config import Config
 
 
 class Blacklist:
-    blacklist = load_blacklist()
-
     def __init__(self, bot):
         self.bot = bot
+        self.blacklist = None
+
+    def load_blacklist(self) -> dict:
+        return utils.load_json(self.bot.config.BLACKLIST_PATH, {})
 
     def save_blacklist(self):
-        utils.save_json(self.blacklist, BLACKLIST_PATH)
+        utils.save_json(self.blacklist, self.bot.config.BLACKLIST_PATH)
 
     def reload(self):
-        self.blacklist = load_blacklist()
+        self.blacklist = self.load_blacklist()
 
     def get_blacklist_for_guild(self, guild_id: str) -> list:
         return self.blacklist.get(str(guild_id), [])
@@ -48,21 +48,20 @@ class Blacklist:
         return True
 
 
-def load_admins() -> dict:
-    return utils.load_json(ADMINS_PATH, {})
-
-
 class Admins:
-    admins = load_admins()
 
     def __init__(self, bot):
         self.bot = bot
+        self.admins = None
+
+    def load_admins(self) -> dict:
+        return utils.load_json(self.bot.config.ADMINS_PATH, {})
 
     def save_admins(self):
-        utils.save_json(self.admins, ADMINS_PATH)
+        utils.save_json(self.admins, self.bot.config.ADMINS_PATH)
 
     def reload(self):
-        self.admins = load_admins()
+        self.admins = self.load_admins()
 
     def get_admins_for_guild(self, guild_id: str) -> list:
         return self.admins.get(str(guild_id), [])
@@ -84,7 +83,12 @@ class Admins:
 
 
 class Driver:
-    def __init__(self):
+    def __init__(self, bot):
+        self.bot = bot
+        # Create logger
+        logger = logging.getLogger(__name__)
+        coloredlogs.install(level = self.bot.config.LOG_LEVEL, fmt = self.bot.config.LOG_FORMAT, logger = logger)
+
         # Setup chrome options
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument('--headless')
@@ -93,6 +97,7 @@ class Driver:
 
         # Remove unwanted logs
         # chrome_options.add_argument("--log-level=3")
+        logger.info("Creating Chrome instance.")
         self.driver = webdriver.Chrome(options = chrome_options)
 
     def get(self, url: str) -> None:
@@ -149,7 +154,8 @@ class Driver:
 
 class Bot(commands.AutoShardedBot):
     def __init__(self):
-        super().__init__(commands.when_mentioned_or(CMD_PREFIX))
-        self.driver = Driver()
+        self.config = Config()
+        super().__init__(commands.when_mentioned_or(''))
+        self.driver = Driver(self)
         self.blacklist = Blacklist(self)
         self.admins = Admins(self)

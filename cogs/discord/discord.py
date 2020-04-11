@@ -12,6 +12,7 @@ import utils
 class Discord(Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.logger = utils.create_logger(self)
 
     @commands.command(aliases = ['sc'])
     async def screenshare(self, ctx):
@@ -35,8 +36,8 @@ class Discord(Cog):
             user.display_name, user.discriminator), thumbnail = user.avatar_url, colour = user.colour)
         em.add_field(name = "Name", value = user.name)
         em.add_field(name = "Id", value = user.id)
-        em.add_field(name = "Created", value = utils.format_time(user.created_at))
-        em.add_field(name = "Joined", value = utils.format_time(user.joined_at))
+        em.add_field(name = "Created", value = utils.format_time(user.created_at, self.bot.config.TIMEZONE))
+        em.add_field(name = "Joined", value = utils.format_time(user.joined_at, self.bot.config.TIMEZONE))
         em.add_field(name = "Status", value = user.status)
         em.add_field(name = "Top role", value = user.top_role)
 
@@ -111,7 +112,7 @@ class Discord(Cog):
 
     @commands.command(aliases = ["t"], hidden = True)
     async def test(self, ctx):
-        print("TEST")
+        self.logger.critical(ctx.author.mention)
 
 
 def setup(bot):

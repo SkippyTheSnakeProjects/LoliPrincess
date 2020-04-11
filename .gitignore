@@ -2,6 +2,7 @@
 ### Example user template template
 ### Example user template
 
+.vscode/
 data/
 
 # IntelliJ project files
@@ -133,4 +134,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
 

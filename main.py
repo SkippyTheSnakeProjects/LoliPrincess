@@ -1,42 +1,64 @@
+import logging
 import random
 
+import coloredlogs
 import discord
 
 import utils
 from bot import Bot
-from config import ERROR_DISPLAY_TIME
-from config import TOKEN
 
+print(r'''
+  _           _ _     _____      _                         
+ | |         | (_)   |  __ \    (_)                        
+ | |     ___ | |_    | |__) | __ _ _ __   ___ ___  ___ ___ 
+ | |    / _ \| | |   |  ___/ '__| | '_ \ / __/ _ \/ __/ __|
+ | |___| (_) | | |   | |   | |  | | | | | (_|  __/\__ \__ \
+ |______\___/|_|_|   |_|   |_|  |_|_| |_|\___\___||___/___/           
+''')
+
+# Initialise bot and config
 bot = Bot()
+bot.config._bot = bot
+bot.config.reload_config()
+
+# Create logger
+logger = logging.getLogger(__name__)
+coloredlogs.install(level = bot.config.LOG_LEVEL, fmt = bot.config.LOG_FORMAT, logger = logger)
 
 
 @bot.event
 async def on_ready():
-    utils.log(f"----- {bot.user.name} online -----")
+    logger.info(f"----- {bot.user.name} online -----")
 
 
 @bot.event
 async def on_message(message):
-    if message.author.id == 140491748148248576 and random.randrange(1, 21) == 20:
-        await message.channel.send(r'''
-        ▬▬▬.◙.▬▬▬
-        ═▂▄▄▓▄▄▂ 
-        ◢◤ █▀▀████▄▄▄▄◢◤ 
-        █▄ █ █▄ ███▀▀▀▀▀▀▀╬ 
-        ◥█████◤
-        ══╩══╩═
-        ╬═╬
-        ╬═╬
-        ╬═╬
-        ╬═╬ 
-        ╬═╬  Just dropped down to say
-        ╬═╬
-        ╬═╬   Callum said the N word
-        ╬═╬☻/ 
-        ╬═╬/▌ 
-        ╬═╬/  \
-        ''')
+    callums_id = 140491748148248576
+    if message.author.id == callums_id and 'n' in message.content.lower() and random.randrange(1, 21) == 20:
+        await message.channel.send(r"""
+▬▬▬.◙.▬▬▬
+═▂▄▄▓▄▄▂ 
+◢◤ █▀▀████▄▄▄▄◢◤ 
+█▄ █ █▄ ███▀▀▀▀▀▀▀╬ 
+◥█████◤
+══╩══╩═
+╬═╬
+╬═╬
+╬═╬
+╬═╬ 
+╬═╬  Just dropped down to say
+╬═╬
+╬═╬   Callum said the N word
+╬═╬☻/ 
+╬═╬/▌ 
+╬═╬/  \                                                          
+                """)
 
+    # Is message is just all command prefixes ignore it
+    if message.content == bot.config.ERROR_DISPLAY_TIME * len(message.content):
+        return
+
+    # Process commands in message
     await bot.process_commands(message)
 
 
@@ -48,7 +70,7 @@ async def on_member_join(member):
         title = "User joined!",
         description = f"Hey {member.mention}, welcome to {member.guild.name}!"
     ))
-    utils.log(f"{member.display_name} just joined {member.guild.name}")
+    logger.info(f"{member.display_name} just joined {member.guild.name}")
 
 
 @bot.event
@@ -65,7 +87,7 @@ async def on_guild_remove(member):
                     title = "Kicked!",
                     description = f"Get fucked! {member.mention} has just been KICKED by {entry.user.mention}:wave::skin-tone-3:"
                 ))
-                utils.log(
+                logger.info(
                     f"{member.display_name} was just kicked from {member.guild.name} by {entry.user.display_name}")
                 return
 
@@ -76,7 +98,7 @@ async def on_guild_remove(member):
                     description = f"Get MEGA fucked! {member.mention} has just been BANNED by {entry.user.mention} :wave::skin-tone-3:"
                 ))
 
-                utils.log(
+                logger.info(
                     f"{member.display_name} was just banned from {member.guild.name} by {entry.user.display_name}")
                 return
 
@@ -85,7 +107,7 @@ async def on_guild_remove(member):
         title = "Left the server",
         description = f"{member.mention} has left the server:wave::skin-tone-3:"
     ))
-    utils.log(f"{member.display_name} has left the server")
+    logger.info(f"{member.display_name} has left the server")
 
 
 @bot.event
@@ -98,16 +120,16 @@ async def on_message_edit(before, after):
 async def on_command_error(ctx, error):
     # Print the exception to the user
     await ctx.send(embed = utils.embed(title = "Command error", description = f"{error}"),
-                   delete_after = ERROR_DISPLAY_TIME)
+                   delete_after = bot.config.ERROR_DISPLAY_TIME)
+    logger.error(f"Command error: {error}")
 
 
-utils.log("----- Initializing -----")
 # ----- Load all cogs from file
 loaded = utils.load_cogs(bot)
-utils.log(f"Loaded {loaded} cog{'s' if loaded > 1 else ''}")
+logger.info(f"Loaded {loaded} cog{'s' if loaded > 1 else ''}")
 
 # ----- Add blacklist check
 bot.add_check(bot.blacklist.is_blacklisted)
 
 # Start bot
-bot.run(TOKEN)
+bot.run(bot.config.TOKEN)
