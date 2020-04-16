@@ -55,7 +55,7 @@ async def on_message(message):
                 """)
 
     # Is message is just all command prefixes ignore it
-    if message.content == bot.config.ERROR_DISPLAY_TIME * len(message.content):
+    if message.content == bot.config.CMD_PREFIX * len(message.content):
         return
 
     # Process commands in message
