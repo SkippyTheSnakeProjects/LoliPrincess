@@ -77,7 +77,7 @@ class Admins:
 
     def verify_admin(self, ctx):
         is_admin = str(ctx.author.id) in self.get_admins_for_guild(ctx.guild.id)
-        if not str(ctx.author.id) == self.bot.config.OWNER_ID and not is_admin:
+        if not str(ctx.author.id) == str(self.bot.config.OWNER_ID) and not is_admin:
             raise CommandError("You need to be an admin to use this command.")
 
         return True
