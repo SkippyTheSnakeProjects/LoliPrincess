@@ -31,9 +31,9 @@ class Admins(Cog):
 
     @commands.command()
     async def adminsadd(self, ctx, member: Member):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         if str(member.id) in self.bot.admins.get_admins_for_guild(ctx.guild.id):
-            raise commands.CommandError(f"{member.mention} is already ad admin.")
+            raise commands.CommandError(f"{member.mention} is already an admin.")
 
         self.bot.admins.add_user_to_admins(member.id, ctx.guild.id)
 
@@ -45,7 +45,7 @@ class Admins(Cog):
 
     @commands.command()
     async def adminsremove(self, ctx, member: Member):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         if str(member.id) not in self.bot.admins.get_admins_for_guild(ctx.guild.id):
             raise commands.CommandError(f"{member.mention} isn't an admin.")
 
@@ -59,7 +59,7 @@ class Admins(Cog):
 
     @commands.command()
     async def reloadadmins(self, ctx):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         self.bot.admins.reload()
         await ctx.send(embed = utils.embed(
             title = "Reload admins",
@@ -69,7 +69,7 @@ class Admins(Cog):
 
     @commands.command()
     async def purge(self, ctx, limit: int, from_user: Member = None):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         self.deleted_message_count = 0
 
         await ctx.message.channel.purge(limit = min(limit, 100),
@@ -89,7 +89,7 @@ class Admins(Cog):
 
     @commands.command()
     async def purgesince(self, ctx, msg: discord.Message, from_user: Member = None):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         self.deleted_message_count = 0
         await ctx.message.channel.purge(limit = 100,
                                         after = msg.created_at,

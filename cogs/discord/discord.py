@@ -111,8 +111,8 @@ class Discord(Cog):
         await ctx.send(perma_invite.url)
 
     @commands.command(aliases = ["t"], hidden = True)
-    async def test(self, ctx):
-        self.logger.critical(ctx.author.mention)
+    async def test(self, ctx, user: Member):
+        print(user.display_name)
 
 
 def setup(bot):

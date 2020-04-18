@@ -12,8 +12,15 @@ class Configuration(Cog):
         self.logger = create_logger(self)
 
     @commands.command()
+    async def reloadProfiles(self, ctx):
+        self.bot.admins.verify_admin(ctx)
+        self.bot.profiles.load_profiles()
+        await ctx.send(embed = utils.embed(title = "Reload profiles",
+                                           description = f"Profiles file reloaded."))
+
+    @commands.command()
     async def reloadConfig(self, ctx):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         changes = self.bot.config.reload_config()
         changes = f"\n {len(changes)} Change{'s' if len(changes) > 1 else ''}" if len(changes) > 0 else ''
         await ctx.send(embed = utils.embed(title = "Reload config",
@@ -21,7 +28,7 @@ class Configuration(Cog):
 
     @commands.command()
     async def setCommandPrefix(self, ctx, new_command_prefix: str):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         self.bot.config.CMD_PREFIX = new_command_prefix
         self.bot.config.save_config()
         self.bot.command_prefix = new_command_prefix
@@ -31,7 +38,7 @@ class Configuration(Cog):
 
     @commands.command()
     async def setErrorDisplayTime(self, ctx, error_display_time: int):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         try:
             self.bot.config.ERROR_DISPLAY_TIME = int(error_display_time)
             self.bot.config.save_config()
@@ -42,7 +49,7 @@ class Configuration(Cog):
 
     @commands.command()
     async def setTimezone(self, ctx, timezone: str):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         self.bot.config.TIMEZONE = timezone
         self.bot.config.save_config()
         await ctx.send(embed = utils.embed(title = "Set timezone",
@@ -50,7 +57,7 @@ class Configuration(Cog):
 
     @commands.command()
     async def set(self, ctx):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
 
 
 def setup(bot):

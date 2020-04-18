@@ -1,6 +1,7 @@
-import json
 import os
 from typing import List
+
+import utils
 
 CONFIG_PATH = 'data/config.json'
 
@@ -21,6 +22,7 @@ class Config:
         self.BLACKLIST_PATH = 'data/admin/blacklist.json'
         self.ADMINS_PATH = 'data/admin/admins.json'
 
+        self.DISCORD_PROFILE_PATH = "data/discordProfiles.json"
         self.LOL_API_KEY = ''
 
         # If config path doesn't exist create it
@@ -31,14 +33,12 @@ class Config:
         self.reload_config()
 
     def save_config(self):
-        with open(CONFIG_PATH, 'w') as f:
-            # Exclude properties that start with and underscore
-            json.dump({k: v for k, v in self.__dict__.items() if not k.startswith('_')}, f)
+        # Exclude properties that start with and underscore
+        data = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+        utils.save_json(data, CONFIG_PATH)
 
     def reload_config(self) -> List[str]:
-        with open(CONFIG_PATH, 'r') as f:
-            config = json.load(f)
-
+        config = utils.load_json(CONFIG_PATH, {})
         changed_properties = self.update_from_config_file(config)
         # Update config file to add any missing keys
         self.save_config()

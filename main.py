@@ -29,6 +29,7 @@ coloredlogs.install(level = bot.config.LOG_LEVEL, fmt = bot.config.LOG_FORMAT, l
 @bot.event
 async def on_ready():
     logger.info(f"----- {bot.user.name} online -----")
+    bot.profiles.save_profiles()
 
 
 @bot.event

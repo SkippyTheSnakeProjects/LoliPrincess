@@ -21,7 +21,7 @@ class Blacklist(Cog):
 
     @commands.command()
     async def blacklistadd(self, ctx, member: Member):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         if str(member.id) in self.bot.blacklist.get_blacklist_for_guild(ctx.guild.id):
             raise commands.CommandError(f"{member.mention} is already on the blacklist.")
 
@@ -34,7 +34,7 @@ class Blacklist(Cog):
 
     @commands.command()
     async def blacklistremove(self, ctx, member: Member):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         if str(member.id) not in self.bot.blacklist.get_blacklist_for_guild(ctx.guild.id):
             raise commands.CommandError(f"{member.mention} isn't on the blacklist.")
 
@@ -47,7 +47,7 @@ class Blacklist(Cog):
 
     @commands.command()
     async def reloadblacklist(self, ctx):
-        await self.bot.admins.verify_admin(ctx)
+        self.bot.admins.verify_admin(ctx)
         self.bot.blacklist.reload()
         await ctx.send(embed = utils.embed(
             title = "Reload blacklist",

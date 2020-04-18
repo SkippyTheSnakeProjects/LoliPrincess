@@ -12,6 +12,8 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 import utils
+from DiscordProfile import DiscordProfiles
+from LolWatcher import LolWatcher
 from config import Config
 
 
@@ -49,7 +51,6 @@ class Blacklist:
 
 
 class Admins:
-
     def __init__(self, bot):
         self.bot = bot
         self.admins = None
@@ -74,9 +75,9 @@ class Admins:
         self.admins[str(guild_id)] = [x for x in self.admins.get(str(guild_id)) if x != str(user_id)]
         self.save_admins()
 
-    async def verify_admin(self, ctx):
+    def verify_admin(self, ctx):
         is_admin = str(ctx.author.id) in self.get_admins_for_guild(ctx.guild.id)
-        if not await self.bot.is_owner(ctx.author) and not is_admin:
+        if not str(ctx.author.id) == self.bot.config.OWNER_ID and not is_admin:
             raise CommandError("You need to be an admin to use this command.")
 
         return True
@@ -140,7 +141,7 @@ class Driver:
     def load_html_content(self, html_content: str):
         self.driver.get("data:text/html;charset=utf-8,{html_content}".format(html_content = html_content))
 
-    def screenshot_element(self, css_selector: str):
+    def screenshot_element(self, css_selector: str, filename: str):
         element = self.find_element(css_selector)  # find part of the page you want image of
         location, size = element.location, element.size
         png = self.driver.get_screenshot_as_png()  # saves screenshot of entire page
@@ -150,7 +151,7 @@ class Driver:
         right, bottom = left + size['width'], top + size['height']
 
         im = im.crop((left, top, right, bottom))  # defines crop points
-        im.save('screenshot.png')  # saves new cropped image
+        im.save(filename)  # saves new cropped image
 
 
 class Bot(commands.AutoShardedBot):
@@ -160,3 +161,5 @@ class Bot(commands.AutoShardedBot):
         self.driver = Driver(self)
         self.blacklist = Blacklist(self)
         self.admins = Admins(self)
+        self.profiles = DiscordProfiles(self)
+        self.lol_watcher = LolWatcher(self)
