@@ -29,14 +29,9 @@ class LeagueOfLegends(Cog):
             await ctx.send(file = File(path))
 
     @commands.command(aliases = ["lolp"])
-    async def lolprofile(self, ctx, user: Member = None, lol_username: str = None):
+    async def lolprofile(self, ctx, lol_username: str):
         async with ctx.typing():
-            if lol_username is not None:
-                user = self.bot.lol_watcher.get_lol_profile_by_name(lol_username)
-            elif user is not None:
-                profile = self.bot.profiles.get_profile_by_id(user.id)
-                user = self.bot.lol_watcher.get_lol_profile_by_id(profile.league_id)
-
+            user = self.bot.lol_watcher.get_lol_profile_by_name(lol_username)
             html_content = self.bot.lol_watcher.create_lol_profile_card_html(user)
             path = self.bot.lol_watcher.create_lol_profile_card_img(html_content, self.profile_img_path)
             await ctx.send(file = File(path))
