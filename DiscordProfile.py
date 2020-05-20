@@ -9,6 +9,7 @@ class DiscordProfile:
 
         # Default values
         self.league_id = None
+        self.karma = {}
 
         # Load values from passed data
         for key, value in (data if data is not None else {}).items():

@@ -3,6 +3,7 @@ import random
 
 import coloredlogs
 import discord
+from discord import Emoji
 
 import utils
 from bot import Bot
@@ -30,6 +31,42 @@ coloredlogs.install(level = bot.config.LOG_LEVEL, fmt = bot.config.LOG_FORMAT, l
 async def on_ready():
     logger.info(f"----- {bot.user.name} online -----")
     bot.profiles.save_profiles()
+
+
+@bot.event
+async def on_reaction_add(reaction, user):
+    upvote_id = "393013984892289026"
+    downvote_id = "393014800197877771"
+    values = {upvote_id  : 1,
+              downvote_id: -1}
+
+    # Adding upvotes or downvotes
+    if isinstance(reaction.emoji, Emoji) and str(reaction.emoji.id) in [upvote_id, downvote_id]:
+        profile = bot.profiles.get_profile_by_id(reaction.message.author.id)
+        users_karma = profile.karma
+        increment = values.get(str(reaction.emoji.id), 0)
+        users_karma[str(user.id)] = users_karma.get(str(user.id), 0) + increment
+        profile.karma = users_karma
+
+        bot.profiles.save_profiles()
+
+
+@bot.event
+async def on_reaction_remove(reaction, user):
+    upvote_id = "393013984892289026"
+    downvote_id = "393014800197877771"
+    values = {upvote_id  : -1,
+              downvote_id: 1}
+
+    # Adding upvotes or downvotes
+    if isinstance(reaction.emoji, Emoji) and str(reaction.emoji.id) in [upvote_id, downvote_id]:
+        profile = bot.profiles.get_profile_by_id(reaction.message.author.id)
+        users_karma = profile.karma
+        increment = values.get(str(reaction.emoji.id), 0)
+        users_karma[str(user.id)] = users_karma.get(str(user.id), 0) + increment
+        profile.karma = users_karma
+
+        bot.profiles.save_profiles()
 
 
 @bot.event
