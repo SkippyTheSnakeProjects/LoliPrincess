@@ -162,4 +162,4 @@ class Bot(commands.AutoShardedBot):
         self.blacklist = Blacklist(self)
         self.admins = Admins(self)
         self.profiles = DiscordProfiles(self)
-        self.lol_watcher = LolWatcher(self)
+        # self.lol_watcher = LolWatcher(self)
