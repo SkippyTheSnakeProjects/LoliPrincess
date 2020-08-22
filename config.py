@@ -23,7 +23,6 @@ class Config:
         self.ADMINS_PATH = 'data/admin/admins.json'
 
         self.DISCORD_PROFILE_PATH = "data/discordProfiles.json"
-        self.LOL_API_KEY = ''
 
         # If config path doesn't exist create it
         if not os.path.exists(CONFIG_PATH):
