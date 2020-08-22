@@ -7,10 +7,10 @@ CONFIG_PATH = 'data/config.json'
 
 
 class Config:
-    TOKEN = os.environ['TOKEN']
 
     def __init__(self):
         self._bot = None
+        self.TOKEN = ""
         # Define configurable variables
         self.CMD_PREFIX = '?'
         self.ERROR_DISPLAY_TIME = 7
