@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t "skippythesnake/Loli-Princess" .
+docker build -t "skippythesnake/loli-princess" .

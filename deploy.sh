@@ -1,4 +1,4 @@
 #!/bin/bash
-docker stop "Loli-Princess"
-docker rm "Loli-Princess"
-docker run -d --restart unless-stopped --name="Loli-Princess" -e TZ="Europe/London" -v '/mnt/appdata/Loli-Princess':'/app/data':'rw' 'skippythesnake/Loli-Princess'
+docker stop "loli-princess"
+docker rm "loli-princess"
+docker run -d --restart unless-stopped --name="loli-princess" -e TZ="Europe/London" -v '/mnt/appdata/loli-princess':'/app/data':'rw' 'skippythesnake/loli-princess'
