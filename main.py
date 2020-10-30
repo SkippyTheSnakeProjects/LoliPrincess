@@ -72,7 +72,7 @@ async def on_reaction_remove(reaction, user):
 @bot.event
 async def on_message(message):
     callums_id = 140491748148248576
-    if message.author.id == callums_id and 'n' in message.content.lower() and random.randrange(1, 21) == 20:
+    if message.author.id == callums_id and 'n' in message.content.lower() and random.randrange(1, 65) == 64:
         await message.channel.send(r"""
 ▬▬▬.◙.▬▬▬
 ═▂▄▄▓▄▄▂ 
