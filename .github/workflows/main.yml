@@ -22,4 +22,6 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run deploy script
-        run: ./deploy.sh
+        run: |
+          chmod +x deploy.sh
+          ./deploy.sh
